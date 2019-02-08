@@ -20,14 +20,17 @@ public class UserController {
 
   @Autowired
   private UserRepository userRepository;
-	
+
+  /**
+   * Get users.
+   */
   @GetMapping("/users")
   public List<User> getAllUsers() {
 	  return userRepository.findAll();
   }
   
   /**
-   * Create user user.
+   * Create user.
    */
   @PostMapping("/users")
   public User createUser(@Valid @RequestBody User user) {
