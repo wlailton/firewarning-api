@@ -13,6 +13,8 @@ pelo aplicativo, via requisição HTTP a uma API, que alimenta o aplicativo, com
 * **WARNING** : superaquecimento dos maquinários: equipes internas da empresa em questão são acionadas via aplicativo para investigar o caso; 
 * **DANGER** : princípio de incêndio : população é notificada via aplicativo a sair de suas casas e buscar locais seguros corpo de bomebeiros é alertado sobre incêndio.
 
+Desenvolva uma API que forneça ao APP os reports de incidentes das empresas para os usuarios finais.
+
 ## Critérios:
 
 A API deve considerar 3 tipos de usuário:
@@ -22,7 +24,8 @@ A API deve considerar 3 tipos de usuário:
 * *Admin:* administradores de sistema que podem atualizar a API.
 
 **[1]** APP cujo o tipo de usuário final se enquadre em "População" pode apenas consultar a API (via HTTP GET).
-Cenário de exemplo: APP consulta lista de empresas a cada x minutos, verificando empresas e status de incidentes. Usuário pode favoritar uma das empresas (como por exemplo a mais próxima de sua casa). Deste modo, a API consulta apenas o status daquela empresa:
+Cenário de exemplo: APP consulta lista de empresas a cada x minutos, verificando empresas e status de incidentes. Usuário pode favoritar uma das empresas (como por exemplo a mais próxima de sua casa). Deste modo, a API consulta apenas o status daquela empresa. O APP, ao ser instalado e pedir permissão de acesso as informações basicas do usuário, pode cadastrar
+o usuário na API via HTTP POST.
 
 *Listar empresas:*
 
@@ -71,6 +74,15 @@ Cenário de exemplo: APP consulta lista de empresas a cada x minutos, verificand
       "nivelPerigo" : "OK",
       "comentario" : "Tudo certo"
     }
+    
+*Cadastrar novo usuario*
+
+    POST /usuarios
+    {
+      "nome": "José Carlos",
+      "email" : "josecarlos@etc.br",
+      "tipo" : "POPULACAO"
+    }
 
 **[2]** APP cujo o tipo de usuário final se enquadre em "Admin" / "Sistema", pode consultar e atualizar as informações da API 
 (via HTTP GET / POST / PUT / DELETE), informações tais como: lista de usuários cadastrados, criação de mensagens de alerta / atualização de mensagens de alerta, etc. Para diferenciar usuários, é interessante que o sistema forneça API key's ou algum outro meio para identificar que o usuráio do APP possui permissão de edições (PUT / POST / DELETE).
@@ -97,6 +109,15 @@ Sugestão de interface:
       "data" : "2019/02/05 00:15:30",
       "status" : "Resolvido",
       "dataResolucao" : "2019/02/05 00:17:15"
+    }
+    
+*Registrar usuários da API:*
+
+    POST /usuarios
+    {
+      "nome": "José Carlos",
+      "email" : "josecarlos@etc.br",
+      "tipo" : "POPULACAO"
     }
 
 *Recuperar usuários que utilizizam a API:*
@@ -138,6 +159,7 @@ A API deve ser implementada considerando as seguintes tecnologias:
 
 *   Java 8 ou superior;
 *   Stack Spring (Boot / Data / Security / MVC ).
+*   Cenarios de Testes (Junit4 ou +)
 
 ## Sugestões:
 
@@ -146,3 +168,7 @@ A API deve ser implementada considerando as seguintes tecnologias:
 * Database in-memory - [H2](http://www.h2database.com/html/main.html);
 
 * Validar permisses de acesso - [Pŕe/Post Authorize](http://websystique.com/spring-security/spring-security-4-method-security-using-preauthorize-postauthorize-secured-el/)
+
+## Entrega
+
+Enviar solução via GitHub (sugerido Fork neste projeto) e enviar para o email: jcarvalho *arroba* idealit *dot* com *dot* br.
