@@ -12,7 +12,7 @@ import com.wlailton.firewarningapi.enums.UserType;
 public class User {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	 @GeneratedValue
 	private Long id;
 	 
 	@Column(nullable = false)
