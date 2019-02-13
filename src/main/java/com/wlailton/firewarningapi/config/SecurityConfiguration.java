@@ -18,11 +18,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		
 		httpSecurity.csrf().disable().authorizeRequests()
-		.antMatchers(HttpMethod.GET, "/api/company/companies").permitAll()
+		.antMatchers(HttpMethod.GET, "/api/company/*").permitAll()
 		.antMatchers(HttpMethod.POST, "/login").permitAll()
 		.anyRequest().authenticated()
 		.and()
-		
 		// filter login requests
 		.addFilterBefore(new JWTLoginFilter("/login", authenticationManager()),
                 UsernamePasswordAuthenticationFilter.class)
