@@ -19,20 +19,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.wlailton.firewarningapi.AbstractMvcTest;
 import com.wlailton.firewarningapi.models.Company;
 import com.wlailton.firewarningapi.repositories.CompanyRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CompanyControllerTest {
+public class CompanyControllerTest extends AbstractMvcTest {
 
 	@Autowired
 	private CompanyRepository companyRepository;
 
 	@Autowired
 	private MockMvc mockMvc;
-	
 	
 	@Test
 	public void contexLoads() throws Exception {
@@ -53,6 +53,8 @@ public class CompanyControllerTest {
 
 	@Test
 	public void postCompany() throws Exception {
+		final String token = extractToken(login("admin", "password").andReturn());
+		
 		Company company = new Company();
 		company.setCnpj("57342905738796");
 		company.setContact("7978987987");
@@ -65,9 +67,14 @@ public class CompanyControllerTest {
 
 		mockMvc.perform(post("/api/company/")
 					.contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJson)
-					.header("Authorization", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU1MDc5MTEzOH0.9k6fIPvZcO-oo2NTNwX5i32NiSP9Lisjxx6NMJbNwLmPwgXnJ0vU32cLMOTTgEw_hurAxW-ufT3vCjY34TqVkQ"))
+					.header("Authorization", token))
 				.andDo(print()).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+	}
+	
+	@Test
+	public void getCompanyNotExistCnpj() throws Exception {
+		mockMvc.perform(get("/api/company/xxxxx")).andDo(print()).andExpect(status().is(404));	
 	}
 
 }
