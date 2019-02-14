@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wlailton.firewarningapi.exceptions.CompanyNotFoundException;
 import com.wlailton.firewarningapi.models.Company;
 import com.wlailton.firewarningapi.repositories.CompanyRepository;
 
@@ -33,7 +34,7 @@ public class CompanyController {
 	/**
 	 * Create company.
 	 */
-	@PostMapping("/companies")
+	@PostMapping("/")
 	public Company createCompany(@Valid @RequestBody Company company) {
 		return companyRepository.save(company);
 	}
@@ -43,7 +44,7 @@ public class CompanyController {
 	 */
 	@GetMapping("/{cnpj}")
 	public Company getCompany(@PathVariable String cnpj) {
-		return companyRepository.findByCNPJ(cnpj);
+		return companyRepository.findByCNPJ(cnpj).orElseThrow(() -> new CompanyNotFoundException(cnpj));
 
 	}
 }

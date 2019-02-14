@@ -1,5 +1,6 @@
 package com.wlailton.firewarningapi.controllers;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wlailton.firewarningapi.enums.Status;
+import com.wlailton.firewarningapi.exceptions.CompanyNotFoundException;
 import com.wlailton.firewarningapi.models.Company;
 import com.wlailton.firewarningapi.models.Incident;
 import com.wlailton.firewarningapi.repositories.CompanyRepository;
@@ -23,6 +26,7 @@ import com.wlailton.firewarningapi.repositories.IncidentRepository;
 public class IncidentController {
 	@Autowired
 	private CompanyRepository companyRepository;
+	
 	@Autowired
 	private IncidentRepository incidentRepository;
 
@@ -32,7 +36,8 @@ public class IncidentController {
 	@PostMapping("/{cnpj}")
 	public Incident postIncident(@PathVariable String cnpj, @Valid @RequestBody Incident incident) {
 
-		Company company = companyRepository.findByCNPJ(cnpj);
+		Company company = companyRepository.findByCNPJ(cnpj)
+				.orElseThrow(() -> new CompanyNotFoundException(cnpj));
 		Set<Incident> incidents = new HashSet<Incident>();
 		incidents.add(incident);
 		company.setIncidents(incidents);
@@ -47,13 +52,19 @@ public class IncidentController {
 	 */
 	@PutMapping("/{cnpj}")
 	public Incident putIncident(@PathVariable String cnpj, @Valid @RequestBody Incident incident) {
-		Incident incidentOld = companyRepository.findByCNPJ(cnpj).getLatestIncident();
 
-		if (incidentOld != null) {
-			incident.setId(incidentOld.getId());
-			incident.setCompany(incidentOld.getCompany());
+		return companyRepository.findByCNPJ(cnpj).map(company -> {
+			Incident incident2 = company.getLatestIncident();
+			incident.setId(incident2.getId());
+			incident.setDate(incident2.getDate());
+			incident.setCompany(incident2.getCompany());
+			if (incident.getStatus().equals(Status.RESOLVED)) {
+				incident.setDateResolution(new Date());
+			} else {
+				incident.setDateResolution(null);
+			}
 			return incidentRepository.save(incident);
-		}
-		return null;
+		}).orElseThrow(() -> new CompanyNotFoundException(cnpj));
+
 	}
 }
