@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -36,6 +37,7 @@ public class IncidentController {
 	 * Post incident.
 	 */
 	@PostMapping("/{cnpj}")
+	@Secured({"ADMIN", "SYSTEM"})
 	public Incident postIncident(@PathVariable String cnpj, @Valid @RequestBody Incident incident) {
 
 		Company company = companyRepository.findByCNPJ(cnpj)
@@ -51,6 +53,7 @@ public class IncidentController {
 	/**
 	 * Put incident.
 	 */
+	@Secured({"ADMIN", "SYSTEM"})
 	@PutMapping("/{cnpj}")
 	public Incident putIncident(@PathVariable String cnpj, @Valid @RequestBody Incident incidentNew) {
 		

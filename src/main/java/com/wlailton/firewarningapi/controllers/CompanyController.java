@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,13 +36,14 @@ public class CompanyController {
 	 * Create company.
 	 */
 	@PostMapping("/")
+	@Secured({"ADMIN", "SYSTEM"})
 	public Company createCompany(@Valid @RequestBody Company company) {
 		return companyRepository.save(company);
 	}
 	
 	/**
 	 * Get company.
-	 */
+	 */	
 	@GetMapping("/{cnpj}")
 	public Company getCompany(@PathVariable String cnpj) {
 		return companyRepository.findByCNPJ(cnpj).orElseThrow(() -> new CompanyNotFoundException(cnpj));
