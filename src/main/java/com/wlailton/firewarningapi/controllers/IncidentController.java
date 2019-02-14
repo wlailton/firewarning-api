@@ -2,6 +2,7 @@ package com.wlailton.firewarningapi.controllers;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wlailton.firewarningapi.enums.Status;
 import com.wlailton.firewarningapi.exceptions.CompanyNotFoundException;
+import com.wlailton.firewarningapi.exceptions.IncidentNotFoundException;
 import com.wlailton.firewarningapi.models.Company;
 import com.wlailton.firewarningapi.models.Incident;
 import com.wlailton.firewarningapi.repositories.CompanyRepository;
@@ -41,7 +43,6 @@ public class IncidentController {
 		Set<Incident> incidents = new HashSet<Incident>();
 		incidents.add(incident);
 		company.setIncidents(incidents);
-
 		incident.setCompany(company);
 
 		return incidentRepository.save(incident);
@@ -51,20 +52,21 @@ public class IncidentController {
 	 * Put incident.
 	 */
 	@PutMapping("/{cnpj}")
-	public Incident putIncident(@PathVariable String cnpj, @Valid @RequestBody Incident incident) {
-
-		return companyRepository.findByCNPJ(cnpj).map(company -> {
-			Incident incident2 = company.getLatestIncident();
-			incident.setId(incident2.getId());
-			incident.setDate(incident2.getDate());
-			incident.setCompany(incident2.getCompany());
-			if (incident.getStatus().equals(Status.RESOLVED)) {
-				incident.setDateResolution(new Date());
-			} else {
-				incident.setDateResolution(null);
-			}
-			return incidentRepository.save(incident);
-		}).orElseThrow(() -> new CompanyNotFoundException(cnpj));
+	public Incident putIncident(@PathVariable String cnpj, @Valid @RequestBody Incident incidentNew) {
+		
+		Company company = companyRepository.findByCNPJ(cnpj).orElseThrow(() -> new CompanyNotFoundException(cnpj));
+		Incident incidentOld = Optional.ofNullable(company.getLatestIncident()).orElseThrow(() -> new IncidentNotFoundException(cnpj));
+		
+		incidentNew.setId(incidentOld.getId());
+		incidentNew.setDate(incidentOld.getDate());
+		incidentNew.setCompany(incidentOld.getCompany());
+		if (incidentNew.getStatus().equals(Status.RESOLVED)) {
+			incidentNew.setDateResolution(new Date());
+		} else {
+			incidentNew.setDateResolution(null);
+		}
+		
+		return incidentRepository.save(incidentNew);
 
 	}
 }

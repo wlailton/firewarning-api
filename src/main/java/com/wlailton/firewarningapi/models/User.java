@@ -4,23 +4,34 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.wlailton.firewarningapi.enums.UserType;
 
 @Entity
+@JsonInclude(Include.NON_NULL)
 public class User {
 	
 	@Id
 	@GeneratedValue
+	@JsonIgnore
 	private Long id;
 	 
 	@Column(nullable = false)
+	@NotNull
 	private String name;
 	
 	@Column(nullable = false)
+	@NotNull
+	@Email
 	private String email;
 	
 	@Column(name = "user_type", nullable = false)
+	@NotNull
 	private UserType userType;
 	
 	public Long getId() {

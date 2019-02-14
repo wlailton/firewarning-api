@@ -1,4 +1,4 @@
-package com.wlailton.firewarningapi.config;
+package com.wlailton.firewarningapi.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,18 +8,17 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.wlailton.firewarningapi.security.JWTAuthenticationFilter;
-import com.wlailton.firewarningapi.security.JWTLoginFilter;
-
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		
-		httpSecurity.csrf().disable().authorizeRequests()
+		httpSecurity.headers().frameOptions().disable().and()
+		.csrf().disable().authorizeRequests()
 		.antMatchers(HttpMethod.GET, "/api/company/*").permitAll()
 		.antMatchers(HttpMethod.POST, "/login").permitAll()
+		.antMatchers("/h2/*").permitAll()
 		.anyRequest().authenticated()
 		.and()
 		// filter login requests
