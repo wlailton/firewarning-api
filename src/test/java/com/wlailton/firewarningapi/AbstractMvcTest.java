@@ -15,7 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.wlailton.firewarningapi.security.AccountCredentials;
 
 @SpringBootTest
@@ -42,5 +45,13 @@ public class AbstractMvcTest {
     
     protected String extractToken(MvcResult result) throws UnsupportedEncodingException {
         return result.getResponse().getHeader("Authorization").replaceFirst("JWT ", "");
+    }
+    
+    protected String castObjectToJson(Object object) throws JsonProcessingException {
+    	ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+		return ow.writeValueAsString(object);
+        
     }
 }

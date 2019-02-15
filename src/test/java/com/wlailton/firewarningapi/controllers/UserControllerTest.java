@@ -17,56 +17,46 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.wlailton.firewarningapi.AbstractMvcTest;
-import com.wlailton.firewarningapi.models.Company;
-import com.wlailton.firewarningapi.repositories.CompanyRepository;
+import com.wlailton.firewarningapi.enums.UserType;
+import com.wlailton.firewarningapi.models.User;
+import com.wlailton.firewarningapi.repositories.UserRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CompanyControllerTest extends AbstractMvcTest {
-
+public class UserControllerTest extends AbstractMvcTest {
 	@Autowired
-	private CompanyRepository companyRepository;
+	private UserRepository userRepository;
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@Test
 	public void contexLoads() throws Exception {
-		assertThat(companyRepository).isNotNull();
+		assertThat(userRepository).isNotNull();
 	}
 
 	@Test
-	public void getCompanies() throws Exception {
-		mockMvc.perform(get("/api/company/companies")).andDo(print()).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
-	}
-
-	@Test
-	public void getCompany() throws Exception {
-		mockMvc.perform(get("/api/company/23639953000108")).andDo(print()).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
-	}
-
-	@Test
-	public void postCompany() throws Exception {
+	public void getUsers() throws Exception {
 		final String token = extractToken(login("admin", "password").andReturn());
 
-		Company company = new Company();
-		company.setCnpj("57342905738796");
-		company.setContact("7978987987");
-		company.setFantasyName("Junit");
-
-		String requestJson = castObjectToJson(company);
-
-		mockMvc.perform(post("/api/company/").contentType(MediaType.APPLICATION_JSON_UTF8).content(requestJson)
-				.header("Authorization", token)).andDo(print()).andExpect(status().isOk())
+		mockMvc.perform(get("/api/user/users").header("Authorization", token)).andDo(print()).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
 	}
 
 	@Test
-	public void getCompanyNotExistCnpj() throws Exception {
-		mockMvc.perform(get("/api/company/xxxxx")).andDo(print()).andExpect(status().is(404));
+	public void postUser() throws Exception {
+		final String token = extractToken(login("admin", "password").andReturn());
+
+		User user = new User();
+		user.setName("Test");
+		user.setEmail("teste@xpto.com");
+		user.setType(UserType.POPULACAO);
+		String requestJson = castObjectToJson(user);
+
+		mockMvc.perform(post("/api/user/").header("Authorization", token).contentType(MediaType.APPLICATION_JSON_UTF8)
+				.content(requestJson)).andDo(print()).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
 	}
 
 }

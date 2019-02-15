@@ -34,7 +34,8 @@ public class UserController {
   /**
    * Create user.
    */
-  @PostMapping("/users")
+  @PostMapping("/")
+  @Secured({"ADMIN", "SYSTEM"})
   public User createUser(@Valid @RequestBody User user) {
     return userRepository.save(user);
   }

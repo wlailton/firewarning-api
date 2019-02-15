@@ -1,7 +1,5 @@
 package com.wlailton.firewarningapi.repositories;
 
-
-
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
@@ -36,13 +34,10 @@ public class CompanyRepositoryTest {
 
 		Company companyFound = companyRepository.findByCNPJ(company.getCnpj())
 				.orElseThrow(() -> new CompanyNotFoundException(company.getCnpj()));
-		
-		assertThat(companyFound.getCnpj())
-	      .isEqualTo(company.getCnpj());
-		assertThat(companyFound.getFantasyName())
-	      .isEqualTo(company.getFantasyName());
-		assertThat(companyFound.getContact())
-	      .isEqualTo(company.getContact());
+
+		assertThat(companyFound.getCnpj()).isEqualTo(company.getCnpj());
+		assertThat(companyFound.getFantasyName()).isEqualTo(company.getFantasyName());
+		assertThat(companyFound.getContact()).isEqualTo(company.getContact());
 
 	}
 }
